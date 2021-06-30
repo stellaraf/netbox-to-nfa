@@ -11,6 +11,12 @@ type NFAFilterItem struct {
 	Rules     []NFARule `json:"rules"`
 }
 
+type NFAFilterGroup struct {
+	Condition string `json:"condition"`
+
+	Rules []NFAFilterItem `json:"rules"`
+}
+
 type NFAParameter struct {
 	AggregateFunction string        `json:"aggregateFunction"`
 	Limit             int           `json:"limit"`

@@ -60,20 +60,30 @@ func GetExcluded() (excluded []string) {
 	return excluded
 }
 
-// buildRules creates NFA filter rules for each prefix in a prefix group and returns the "properly"
-// formatted JSON string.
 func buildRules(pg types.PrefixGroup) string {
-	rules := []NFARule{}
-	src := NFARule{ComparisonOperator: "eq", Key: "src-addr", Value: []string{}}
-	dst := NFARule{ComparisonOperator: "eq", Key: "dst-addr", Value: []string{}}
+	excluded := GetExcluded()
+
+	// Create an AND rule that includes the prefix as the source, but excludes the excluded ranges
+	// as destinations.
+	srcInc := NFARule{ComparisonOperator: "eq", Key: "src-addr", Value: []string{}}
+	srcExc := NFARule{ComparisonOperator: "noteq", Key: "dst-addr", Value: excluded}
+
+	// Create an AND rule that includes the prefix as the destination, but excludes the excluded
+	// ranges as sources.
+	dstInc := NFARule{ComparisonOperator: "eq", Key: "dst-addr", Value: []string{}}
+	dstExc := NFARule{ComparisonOperator: "noteq", Key: "src-addr", Value: excluded}
 
 	for _, p := range pg.Prefixes {
 		ipr := fmt.Sprintf("%s-%s", p.Start, p.End)
-		src.Value = append(src.Value, ipr)
-		dst.Value = append(dst.Value, ipr)
+		srcInc.Value = append(srcInc.Value, ipr)
+		dstInc.Value = append(dstInc.Value, ipr)
 	}
 
-	rules = append(rules, src, dst)
+	srcGroup := NFAFilterItem{Condition: "and", Rules: []NFARule{srcInc, srcExc}}
+	dstGroup := NFAFilterItem{Condition: "and", Rules: []NFARule{dstInc, dstExc}}
+
+	rules := NFAFilterGroup{Condition: "or", Rules: []NFAFilterItem{srcGroup, dstGroup}}
+
 	rJson, err := json.Marshal(rules)
 	if err != nil {
 		panic(err)
@@ -86,18 +96,6 @@ func buildfilter(pg types.PrefixGroup) []byte {
 	name := createName(pg.Tenant)
 	rules := buildRules(pg)
 
-	rFilter := cleanSprintf(`
-	{
-		"condition": "or",
-		"rules": %s
-	}`, rules)
-
-	fb, err := json.Marshal(rFilter)
-	if err != nil {
-		panic(err)
-	}
-	filter := string(fb)
-
 	rParam := cleanSprintf(`
 	{
 		"aggregateFunction": "sum",
@@ -109,7 +107,7 @@ func buildfilter(pg types.PrefixGroup) []byte {
 		"groupby": ["ts", "ip-version"],
 		"order": "descending",
 		"rateUnit": "seconds"
-	}`, filter)
+	}`, rules)
 
 	pb, err := json.Marshal(rParam)
 	if err != nil {
