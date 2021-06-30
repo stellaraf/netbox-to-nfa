@@ -23,6 +23,7 @@ func init() {
 	util.CheckEnv("NFA_URL", true)
 	util.CheckEnv("NFA_USERNAME", true)
 	util.CheckEnv("NFA_PASSWORD", true)
+	util.CheckEnv("NB2NFA_EXCLUDED_RANGES", true)
 	logFile := util.GetEnv("NB2NFA_LOGFILE")
 	if logFile == "" {
 		logFile = "/var/log/nb2nfa.log"
@@ -34,11 +35,12 @@ func init() {
 
 func main() {
 	if err := cli.Root(rootCmd,
-		cli.Tree(help),
+		cli.Tree(cli.HelpCommand("display help information")),
 		cli.Tree(purgeCmd),
 		cli.Tree(syncCmd),
 		cli.Tree(prefixesCmd),
 		cli.Tree(filtersCmd),
+		cli.Tree(cfgCmd),
 	).Run(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

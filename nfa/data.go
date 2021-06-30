@@ -3,6 +3,7 @@ package nfa
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -44,6 +45,19 @@ func GetFilters() ([]NFAFilter, error) {
 		return true
 	})
 	return filters, nil
+}
+
+func GetExcluded() (excluded []string) {
+	raw := util.GetEnv("NB2NFA_EXCLUDED_RANGES")
+	values := strings.Split(raw, ",")
+	for i, v := range values {
+		values[i] = strings.TrimSpace(v)
+		_, net, err := net.ParseCIDR(values[i])
+		util.Check("Error parsing value '%s' from NB2NFA_EXCLUDED_RANGES environment variable to a valid network", err, values[i])
+		s, e := util.GetIPRange(net.String())
+		excluded = append(excluded, fmt.Sprintf("%s-%s", s, e))
+	}
+	return excluded
 }
 
 // buildRules creates NFA filter rules for each prefix in a prefix group and returns the "properly"
