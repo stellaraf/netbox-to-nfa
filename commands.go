@@ -90,7 +90,7 @@ var purgeCmd = &cli.Command{
 	Argv: func() interface{} { return new(argT) },
 	Fn: func(ctx *cli.Context) error {
 		count := nfa.PurgeFilters()
-		ctx.String("Purged %d NFA filters", count)
+		ctx.String("Purged %d NFA filters\n", count)
 		return nil
 	},
 }
@@ -104,7 +104,7 @@ var syncCmd = &cli.Command{
 		if err != nil {
 			return err
 		}
-		ctx.String("Synchronized %d tenant prefixes", len(u))
+		ctx.String("Synchronized %d tenant prefixes\n", len(u))
 		return nil
 	},
 }
