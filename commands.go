@@ -20,8 +20,12 @@ type cfgT struct {
 	ShowPasswords bool `cli:"p,show-passwords" usage:"Show unobscured passwords in output"`
 }
 
+var title string = fmt.Sprintf(`
+nb2nfa %s
+  Synchronize Netbox Prefixes with Noction NFA`, Version)
+
 var rootCmd = &cli.Command{
-	Desc: "Synchronize Netbox Prefixes with Noction NFA",
+	Desc: title,
 	Argv: func() interface{} { return new(argT) },
 	Fn: func(ctx *cli.Context) error {
 		return nil

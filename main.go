@@ -9,6 +9,8 @@ import (
 	"stellar.af/netbox-to-nfa/util"
 )
 
+var Version string = "0.2.0"
+
 func logSetup(fileName string) {
 	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	util.Check("Error accessing log file '%s'", err, fileName)
