@@ -30,11 +30,13 @@ tar xvfz <release file> nb2nfa
 
 ```console
 $ ./nb2nfa --help
-Synchronize Netbox Prefixes with Noction NFA
+
+nb2nfa 0.2.0
+  Synchronize Netbox Prefixes with Noction NFA
 
 Options:
 
-  -h, --help   show help
+  -h, --help   display help information
 
 Commands:
 
@@ -43,21 +45,35 @@ Commands:
   sync       Run synchronization
   prefixes   List prefixes from NetBox that should be synced to NFA
   filters    List all NFA filters
+  config     Get validated configuration variables
+
 ```
 
 ### Environment Variables
 
 All of the below environment variables are required for netbox-to-nfa to run.
 
-| Name              | Description                                                                     |
-| :---------------- | :------------------------------------------------------------------------------ |
-| `NETBOX_URL`      | NetBox URL, e.g. `https://netbox.example.com`                                   |
-| `NETBOX_TOKEN`    | NetBox API Token                                                                |
-| `NETBOX_NFA_ROLE` | NetBox prefix role. A prefix must be assigned this role for it to be picked up. |
-| `NFA_URL`         | NFA URL, e.g. `https://nfa.example.com`                                         |
-| `NFA_USERNAME`    | NFA admin username                                                              |
-| `NFA_PASSWORD`    | NFA admin password                                                              |
+| Name                     | Description                                                                                      |
+| :----------------------- | :----------------------------------------------------------------------------------------------- |
+| `NETBOX_URL`             | NetBox URL, e.g. `https://netbox.example.com`                                                    |
+| `NETBOX_TOKEN`           | NetBox API Token                                                                                 |
+| `NETBOX_NFA_ROLE`        | NetBox prefix role. A prefix must be assigned this role for it to be picked up.                  |
+| `NFA_URL`                | NFA URL, e.g. `https://nfa.example.com`                                                          |
+| `NFA_USERNAME`           | NFA admin username                                                                               |
+| `NB2NFA_EXCLUDED_RANGES` | Comma-separated list of prefixes for which traffic to/from will be excluded from each NFA filter |
 
+#### `NB2NFA_EXCLUDED_RANGES` Detail
+
+For example, if you had a prefix from NetBox of `203.0.113.0/24`, and set:
+
+```bash
+export NB2NFA_EXCLUDED_RANGES="192.0.2.0/24,2001:db8::/32"
+```
+
+The resulting NFA filter logic would look something like:
+
+- Anything **from** `203.0.113.0/24`, unless the destination is `192.0.2.0/24` or `2001:db8::/32`
+- Anything **to** `203.0.113.0/24`, unless the source is `192.0.2.0/24` or `2001:db8::/32`
 
 ## Creating a New Release
 
