@@ -12,8 +12,12 @@ import (
 	"stellar.af/netbox-to-nfa/util"
 )
 
-func createName(tenant string) string {
-	return fmt.Sprintf("Utilization: %s", tenant)
+func createName(tenant string) (name string) {
+	name = tenant
+	if len(tenant) > 45 {
+		name = fmt.Sprintf("%s...", tenant[0:41])
+	}
+	return
 }
 
 // GetFilters gets all NFA filters. Because of how stupid the NFA API is, the `parameters` and
@@ -98,8 +102,10 @@ func buildfilter(pg types.PrefixGroup) []byte {
 
 	rParam := cleanSprintf(`
 	{
+		"aggregateBy": "octets",
 		"aggregateFunction": "sum",
 		"aggregateColumn": "octets",
+		"asPathPrependRemove": 1,
 		"limit": 10,
 		"orderby": "octets",
 		"pageSize": 300,
@@ -142,10 +148,9 @@ func PurgeFilters() int {
 	}
 
 	for _, f := range allFilters {
-		var desc *string
-		desc = &f.Description
+		desc := &f.Description
 
-		if desc != nil && strings.HasPrefix(f.Name, "Utilization:") {
+		if desc != nil && util.IsProbablySHA256(*desc) {
 			_, err := NFARequest("DELETE", fmt.Sprintf("/api/filters/%d", f.Id), emptyMap, nil)
 			util.Check("Error deleting filter %d (%s)", err, f.Id, f.Name)
 		}

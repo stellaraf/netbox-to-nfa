@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"stellar.af/netbox-to-nfa/types"
@@ -39,4 +40,10 @@ func BuildUrl(base string, path string, query types.QueryParams) (u *url.URL) {
 	}
 	u.RawQuery = q.Encode()
 	return u
+}
+
+// IsProbablySHA256 determines if a string has the "shape" of a SHA-256 hash.
+func IsProbablySHA256(value string) bool {
+	pat := regexp.MustCompile(`^[a-z0-9]+$`)
+	return pat.MatchString(value) && len(value) == 64
 }

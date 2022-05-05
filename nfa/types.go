@@ -12,25 +12,27 @@ type NFAFilterItem struct {
 }
 
 type NFAFilterGroup struct {
-	Condition string `json:"condition"`
-
-	Rules []NFAFilterItem `json:"rules"`
+	Condition string          `json:"condition"`
+	Rules     []NFAFilterItem `json:"rules"`
 }
 
 type NFAParameter struct {
-	AggregateFunction string        `json:"aggregateFunction"`
-	Limit             int           `json:"limit"`
-	OrderBy           string        `json:"orderby"`
-	PageSize          int           `json:"pageSize"`
-	AggregateColumn   string        `json:"aggregateColumn"`
-	Devices           []int         `json:"devices"`
-	Locations         []int         `json:"locations"`
-	Filters           NFAFilterItem `json:"filters"`
-	GroupBy           []string      `json:"groupby"`
-	Order             string        `json:"order"`
-	GroupByDstPrefix  int           `json:"groupByDstPrefix"`
-	GroupBySrcPrefix  int           `json:"groupBySrcPrefix"`
-	RateUnit          string        `json:"rateUnit"`
+	AggregateBy         string        `json:"aggregateBy"`
+	AggregateFunction   string        `json:"aggregateFunction"`
+	ASPathPrependRemove int           `json:"asPathPrependRemove"`
+	Limit               int           `json:"limit"`
+	OrderBy             string        `json:"orderby"`
+	PageSize            int           `json:"pageSize"`
+	AggregateColumn     string        `json:"aggregateColumn"`
+	Devices             []int         `json:"devices"`
+	Locations           []int         `json:"locations"`
+	Filters             NFAFilterItem `json:"filters"`
+	FiltersNarrowBy     []string      `json:"filtersNarrowBy"`
+	GroupBy             []string      `json:"groupby"`
+	Order               string        `json:"order"`
+	GroupByDstPrefix    int           `json:"groupByDstPrefix"`
+	GroupBySrcPrefix    int           `json:"groupBySrcPrefix"`
+	RateUnit            string        `json:"rateUnit"`
 }
 
 type NFAFilter struct {
