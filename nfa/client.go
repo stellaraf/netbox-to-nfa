@@ -32,10 +32,10 @@ func NFAAuth(client *http.Client) (*http.Client, error) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("Error authenticating to '%s' failed:\n%s", u, err.Error())
+		return nil, fmt.Errorf("error authenticating to '%s' failed:\n%s", u, err.Error())
 	}
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("Error authenticating to '%s' failed:\n%s", u, res.Status)
+	if res.StatusCode != 201 {
+		return nil, fmt.Errorf("error authenticating to '%s' failed:\n%s", u, res.Status)
 	}
 	return client, nil
 }
@@ -63,20 +63,20 @@ func NFARawRequest(m string, fu string, b *[]byte) (gjson.Result, error) {
 	res, err := client.Do(req)
 
 	if err != nil {
-		return emptyResult, fmt.Errorf("Request to '%s' failed:\n%s", fu, err.Error())
+		return emptyResult, fmt.Errorf("request to '%s' failed:\n%s", fu, err.Error())
 	}
 
 	if res.StatusCode > 399 {
 		defer res.Body.Close()
 		body, _ := ioutil.ReadAll(res.Body)
-		return emptyResult, fmt.Errorf("Error sending %s request to '%s' - %s - Detail:\n%s", m, fu, res.Status, string(body))
+		return emptyResult, fmt.Errorf("error sending %s request to '%s' - %s - Detail:\n%s", m, fu, res.Status, string(body))
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		return emptyResult, fmt.Errorf("Unable to parse response from '%s'\n%s", fu, err.Error())
+		return emptyResult, fmt.Errorf("unable to parse response from '%s'\n%s", fu, err.Error())
 	}
 	return gjson.Parse(string(body)), nil
 }
