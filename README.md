@@ -4,8 +4,8 @@
   <br/>
   <h3>netbox-to-nfa</h3>
   <br/>
-  <a href="https://github.com/stellaraf/netbox-to-nfa/actions?query=workflow%3Arelease">
-    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/stellaraf/netbox-to-nfa/release?color=9100fa&style=for-the-badge">
+  <a href="https://github.com/stellaraf/netbox-to-nfa/actions/workflows/release.yml">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/stellaraf/netbox-to-nfa/release.yml">
   </a>
   <br/>
   
